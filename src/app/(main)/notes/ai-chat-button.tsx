@@ -3,8 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useAuthToken } from "@convex-dev/auth/react";
+import { useChat } from "@ai-sdk/react";
 import { Bot, Expand, Minimize, Send, Trash, X } from "lucide-react";
 import { useRef, useState } from "react";
+
+const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.replace(
+  /.cloud$/,
+  ".site"
+);
 
 export function AIChatButton() {
   const [chatOpen, setChatOpen] = useState(false);
@@ -27,6 +34,19 @@ interface AIChatBoxProps {
 
 function AIChatBox({ open, onClose }: AIChatBoxProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const token = useAuthToken();
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading } =
+    useChat({
+      api: `${convexSiteUrl}/api/chat`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      onError: (error) => {
+        console.error("Chat error:", error);
+      },
+    });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -77,12 +97,22 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
       </div>
 
       <div className="flex-1 space-y-4 overflow-y-auto p-3">
-        {/* TODO: Render messages here */}
+        {messages.map((m) => (
+          <div key={m.id} className="mb-4">
+            <div className="font-semibold mb-1">
+              {m.role === "user" ? "You" : "Assistant"}:
+            </div>
+            <div>{m.content}</div>
+          </div>
+        ))}
+        {isLoading && <div>Thinking...</div>}
         <div ref={messagesEndRef} />
       </div>
 
-      <form className="flex gap-2 border-t p-3">
+      <form className="flex gap-2 border-t p-3" onSubmit={handleSubmit}>
         <Textarea
+          value={input}
+          onChange={handleInputChange}
           placeholder="Type your message..."
           className="max-h-[120px] min-h-[40px] resize-none overflow-y-auto"
           maxLength={1000}
