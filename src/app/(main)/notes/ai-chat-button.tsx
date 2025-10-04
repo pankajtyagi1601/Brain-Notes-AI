@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useAuthToken } from "@convex-dev/auth/react";
 import { useChat } from "@ai-sdk/react";
+import Markdown from "react-markdown";
 import { Bot, Expand, Minimize, Send, Trash, X } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -96,16 +97,31 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
         </div>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto p-3">
+      <div className="flex-1 space-y-4 overflow-y-auto p-4">
         {messages.map((m) => (
-          <div key={m.id} className="mb-4">
-            <div className="font-semibold mb-1">
-              {m.role === "user" ? "You" : "Assistant"}:
+          <div
+            key={m.id}
+            className={cn(
+              "rounded-lg p-3",
+              m.role === "user" ? "bg-primary/20 ml-8" : "bg-muted mr-8"
+            )}
+          >
+            <div className="font-semibold mb-2 text-sm">
+              {m.role === "user" ? "You" : "Assistant"}
             </div>
-            <div>{m.content}</div>
+            <div className="prose prose-sm dark:prose-invert max-w-none">
+              <Markdown>{m.content}</Markdown>
+            </div>
           </div>
         ))}
-        {isLoading && <div>Thinking...</div>}
+        {isLoading && (
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="size-2 animate-bounce rounded-full bg-primary" />
+            <div className="size-2 animate-bounce rounded-full bg-primary delay-100" />
+            <div className="size-2 animate-bounce rounded-full bg-primary delay-200" />
+            <span className="text-sm">Thinking...</span>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
