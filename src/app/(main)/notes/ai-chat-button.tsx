@@ -299,6 +299,7 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
 // Separate component for message bubbles with copy functionality
 function MessageBubble({ message }: { message: any }) {
   const [copied, setCopied] = useState(false);
+    const isWelcomeMessage = message.id === "welcome";
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(message.content);
@@ -317,7 +318,7 @@ function MessageBubble({ message }: { message: any }) {
         <div className="font-semibold text-sm">
           {message.role === "user" ? "You" : "Assistant"}
         </div>
-        {message.role === "assistant" && (
+        {message.role === "assistant" && !isWelcomeMessage  && (
           <Button
             size="icon"
             variant="ghost"
