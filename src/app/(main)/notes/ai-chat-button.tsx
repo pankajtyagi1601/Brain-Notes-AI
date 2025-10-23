@@ -16,6 +16,7 @@ import {
   Copy,
   Check,
   RotateCw,
+  ExternalLink,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -28,6 +29,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import Link from "next/link";
 
 const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.replace(
   /.cloud$/,
@@ -48,7 +50,7 @@ export function AIChatButton() {
     <>
       <Button onClick={() => setChatOpen(true)} variant="outline">
         <Bot />
-        <span>Ask AI</span>
+        <span>Ask Zuxi</span>
       </Button>
       <AIChatBox open={chatOpen} onClose={() => setChatOpen(false)} />
     </>
@@ -196,7 +198,6 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
           <MessageBubble key={m.id} message={m} />
         ))}
 
-        {/* Loading Indicator */}
         {isLoading && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <div className="size-2 animate-bounce rounded-full bg-primary" />
@@ -206,7 +207,6 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
           </div>
         )}
 
-        {/* Error Display */}
         {error && (
           <div className="bg-destructive/10 text-destructive border border-destructive/20 rounded-lg p-3 mx-8 flex items-start justify-between gap-3">
             <div className="flex-1">
@@ -335,7 +335,50 @@ function MessageBubble({ message }: { message: any }) {
         )}
       </div>
       <div className="prose prose-sm dark:prose-invert max-w-none">
-        <Markdown>{message.content}</Markdown>
+        <Markdown
+          components={{
+            a({ href, children, ...props }) {
+              const isNoteLink = href?.includes("noteId=");
+
+              if (isNoteLink && href) {
+                try {
+                  const url = new URL(href, "http://localhost");
+                  const noteId = url.searchParams.get("noteId");
+                  if (noteId) {
+                    return (
+                      <Link
+                        href={`/notes?noteId=${noteId}`}
+                        className={cn(
+                          "text-primary hover:underline font-medium inline-flex items-center gap-1"
+                        )}
+                        {...props}
+                      >
+                        {children}
+                        <ExternalLink className="size-3" />
+                      </Link>
+                    );
+                  }
+                } catch {
+                  // if URL parsing fails, fallback to normal <a>
+                }
+              }
+
+              return (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-medium"
+                  {...props}
+                >
+                  {children}
+                </a>
+              );
+            },
+          }}
+        >
+          {message.content}
+        </Markdown>
       </div>
     </div>
   );

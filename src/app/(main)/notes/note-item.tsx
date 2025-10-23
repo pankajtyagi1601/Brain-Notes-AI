@@ -16,7 +16,7 @@ export function NoteItem({ note }: NoteItemProps) {
   return (
     <>
       <Card
-        className="cursor-pointer hover:shadow-md transition-shadow"
+        className="cursor-pointer border-primary hover:shadow-md transition-shadow"
         onClick={handleOpenNote}
       >
         <CardHeader>

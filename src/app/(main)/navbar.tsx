@@ -6,7 +6,7 @@ import { SignOutButton } from "./sign-out-button";
 
 export function Navbar() {
   return (
-    <nav className="flex justify-center p-4 bg-card border-b">
+    <nav className="flex border-primary justify-center p-4 bg-card border-b">
       <div className="container xl:max-w-6xl flex items-center mx-auto justify-between">
         <Link
           href="/notes"
@@ -14,12 +14,12 @@ export function Navbar() {
         >
           <Image
             src={logo}
-            alt="Smart Notes Logo"
+            alt="Brain Notes AI Logo"
             width={32}
             height={32}
             className="rounded"
           />
-          Smart Notes
+          Brain Notes AI
         </Link>
         <div className="flex items-center gap-2">
           <ModeToggle />

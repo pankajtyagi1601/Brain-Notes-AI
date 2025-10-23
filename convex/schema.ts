@@ -4,12 +4,15 @@ import { v } from "convex/values";
 
 const schema = defineSchema({
   ...authTables,
-  // Your other tables
   notes: defineTable({
     title: v.string(),
     body: v.string(),
     userId: v.id("users"),
-  }).index("by_userId", ["userId"]),
+    createdAt: v.number(), 
+    updatedAt: v.number(), 
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_createdAt", ["userId", "createdAt"]),
 });
 
 export default schema;

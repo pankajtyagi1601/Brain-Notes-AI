@@ -1,5 +1,6 @@
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,7 +12,7 @@ export default function Home() {
         <div className="mb-8">
           <Image
             src={logo}
-            alt="Smart Notes Logo"
+            alt="Brain Notes AI Logo"
             width={120}
             height={120}
             className="mx-auto"
@@ -21,7 +22,7 @@ export default function Home() {
 
         {/* Title */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-          Smart Notes
+          Brain Notes AI
         </h1>
 
         {/* Description */}
@@ -33,7 +34,7 @@ export default function Home() {
         {/* CTA Button */}
         <div className="pt-4">
           <Button asChild size="lg" className="text-lg px-8 py-3">
-            <Link href="/notes">Get Started</Link>
+            <Link href="/notes">Get Started <ArrowRight /></Link>
           </Button>
         </div>
 
@@ -46,14 +47,14 @@ export default function Home() {
       {/* Footer */}
       <footer className="mt-auto pt-16 pb-8">
         <div className="text-center">
-          <a
+          {/* <a
             href="https://www.youtube.com/c/codinginflow"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Full tutorial on YouTube →
-          </a>
+          > */}
+            Made by <span className="text-primary">Goofy Guy</span>
+          {/* </a> */}
         </div>
       </footer>
     </div>
