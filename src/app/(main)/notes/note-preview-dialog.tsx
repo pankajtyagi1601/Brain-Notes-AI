@@ -13,7 +13,6 @@ import { Doc } from "../../../../convex/_generated/dataModel";
 import { useSearchParams } from "next/navigation";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { useState } from "react";
 import { toast } from "sonner";
 
 interface NotePreviewDialogProps {

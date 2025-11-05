@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useAuthToken } from "@convex-dev/auth/react";
 import { useChat } from "ai/react";
+import type { Message } from "ai";
 import Markdown from "react-markdown";
 import {
   Bot,
@@ -188,7 +189,7 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
       {!isOnline && (
         <div className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-b px-4 py-2 text-sm flex items-center gap-2">
           <div className="size-2 rounded-full bg-yellow-500 animate-pulse" />
-          You're offline. Connection will resume automatically.
+          You&apos;re offline. Connection will resume automatically.
         </div>
       )}
 
@@ -297,7 +298,7 @@ function AIChatBox({ open, onClose }: AIChatBoxProps) {
 }
 
 // Separate component for message bubbles with copy functionality
-function MessageBubble({ message }: { message: any }) {
+function MessageBubble({ message }: { message: Message }) {
   const [copied, setCopied] = useState(false);
     const isWelcomeMessage = message.id === "welcome";
 
