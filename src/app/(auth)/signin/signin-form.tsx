@@ -53,7 +53,7 @@ export function SigninForm() {
       if (
         error instanceof Error &&
         (error.message.includes("InvalidAccountId") ||
-          error.message.includes("InavlidSecret"))
+          error.message.includes("InvalidSecret"))
       ) {
         form.setError("root", {
           type: "manual",
