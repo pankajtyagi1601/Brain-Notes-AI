@@ -10,86 +10,85 @@ import {
 } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
 import { Doc } from "../../../../convex/_generated/dataModel";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { toast } from "sonner";
+import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
 
 interface NotePreviewDialogProps {
   note: Doc<"notes">;
+  /** Optional callback for parent to refresh the list after a deletion */
+  onNoteDeleted?: (id: string) => void;
 }
 
-export function NotePreviewDialog({ note }: NotePreviewDialogProps) {
+export function NotePreviewDialog({
+  note,
+  onNoteDeleted,
+}: NotePreviewDialogProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const isOpen = searchParams.get("noteId") === note._id;
 
   const deleteNote = useMutation(api.notes.deleteNote);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  function handleClose() {
+    router.push(window.location.pathname);
+  }
 
   async function handleDelete() {
+    const confirmed = confirm("Are you sure you want to delete this note?");
+    if (!confirmed) return;
+
+    setIsDeleting(true);
     try {
       await deleteNote({ noteId: note._id });
       toast.success("Note deleted");
+      onNoteDeleted?.(note._id);
       handleClose();
     } catch (error) {
       console.error("Failed to delete note", error);
       toast.error("Failed to delete note. Please try again.");
+    } finally {
+      setIsDeleting(false);
     }
   }
 
-  function handleClose() {
-    window.history.pushState(null, "", window.location.pathname);
-  }
-
-  // Time Stamp Format similar to Google Keep
-  function formatEditedTime(timestamp: number) {
-    const date = new Date(timestamp);
-    const now = new Date();
-
-    const isToday =
-      date.getDate() === now.getDate() &&
-      date.getMonth() === now.getMonth() &&
-      date.getFullYear() === now.getFullYear();
-
-    if (isToday) {
-      // Show time if edited today (e.g., "Edited 1:32 PM")
-      const timeString = date.toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit",
-      });
-      return `Edited ${timeString}`;
-    } else {
-      // Show date if not today (e.g., "Edited Nov 26, 2024")
-      const dateString = date.toLocaleDateString([], {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-      return `Edited ${dateString}`;
-    }
+  // Relative time format (e.g., “Edited 2 hours ago”)
+  function formatEditedTime(timestamp: number | string) {
+    const date = new Date(Number(timestamp));
+    return `Edited ${formatDistanceToNow(date, { addSuffix: true })}`;
   }
 
   const editedText = formatEditedTime(note.updatedAt || note.createdAt);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[625px]">
+      <DialogContent className="sm:max-w-3xl selection:bg-primary selection:text-primary-foreground rounded-xl border-primary max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>{note.title}</DialogTitle>
+          <DialogTitle>{note.title || "Untitled"}</DialogTitle>
         </DialogHeader>
 
-        <div className="mt-4 whitespace-pre-wrap">{note.body}</div>
+        {/* Scrollable content */}
+        <div className="flex-1 min-h-0 mt-4 scroll-thumb-primary  text-muted-foreground overflow-y-auto whitespace-pre-wrap pr-3">
+          {note.body || (
+            <span className="text-muted-foreground italic">No content</span>
+          )}
+        </div>
 
-        <p className="text-sm text-muted-foreground mt-3 text-right">
-          {editedText}
-        </p>
+        <p className="text-sm mt-3 text-right">{editedText}</p>
 
         <DialogFooter>
           <Button
-            variant="destructive"
-            className="gap-2"
+            className="gap-2 bg-primary/50"
             onClick={handleDelete}
+            aria-label="Delete note"
+            disabled={isDeleting}
           >
             <Trash2 size={16} />
+            <span className="sr-only">Delete note</span>
           </Button>
         </DialogFooter>
       </DialogContent>

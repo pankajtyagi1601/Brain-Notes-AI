@@ -130,3 +130,26 @@
     cursor: default;
   }
 }
+
+.scroll-thumb-primary::-webkit-scrollbar-track {
+  background: transparent; /* track stays invisible */
+}
+
+.scroll-thumb-primary::-webkit-scrollbar-thumb {
+  background-color: theme(--color-primary);
+  border-radius: 10px;
+  border: 2px solid transparent; /* prevents width change on drag */
+  background-clip: content-box; /* ensures thumb stays same width */
+  box-sizing: border-box;
+}
+
+/* Firefox */
+.scroll-thumb-primary {
+  scrollbar-width: thin;
+  scrollbar-color: theme(--color-primary) transparent;
+}
+
+.dialog-overlay {
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.3);
+}

@@ -11,7 +11,7 @@ export function NotesPage() {
   const notes = useQuery(api.notes.getUserNotes);
 
   return (
-    <div className="container xl:max-w-6xl mx-auto">
+    <div className="container selection:bg-primary selection:text-primary-foreground xl:max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">My Notes</h1>
         <div className="flex gap-2">
